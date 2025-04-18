@@ -151,16 +151,21 @@ module.exports = {
             "warn",
             {
                 "groups": [
-                    [// libraries
+                    [
+                        // libraries
                         "^react", "^(@[a-zA-Z]).[!hooks]*", "yup", "dayjs", "swiper", "axios", "^i18", "rc-slider",
                         // actions
                         "^actions/", "^context/actions",
                         // api
                         "^api/", "^api",
-                        // components
-                        "^components/", "App", "ApolloWrapper",
+                        // app
+                        "^app/", "App", "ApolloWrapper",
+                        // pages
+                        "^pages/",
+                        // features
+                        "^features/", '^feature',
                         // constants
-                        "^.*(constants).*$", "^constants/", "^components/Registration/steps",
+                        "^.*(constants).*$", "^constants/", "^pages/Registration/steps",
                         // config
                         "^.*(config).*$",
                         // dictionary
@@ -178,7 +183,8 @@ module.exports = {
                         // styles
                         "^.+.?(css|scss)$",
                         // types
-                        '^graphql/', "^.*(types).*$",]
+                        '^graphql/', "^.*(types).*$",
+                    ]
                 ],
             },
         ],
