@@ -1,11 +1,50 @@
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { formatDateTime } from 'helpers/formatDateTime';
+import type { Article } from 'features/news/types';
 
 export const NewsDetail = () => {
-  const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const article: Article | undefined = location.state?.article;
+
+  if (!article) {
+    return (
+      <div>
+        <p>Новость не найдена</p>
+        <button onClick={() => navigate('/')}>← Назад</button>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {`Подробности новости ID: ${id}`}
+    <div className="max-w-3xl mx-auto">
+      <button
+        className="text-blue-600 underline mb-4"
+        onClick={() => navigate('/')}
+      >
+        ← Назад к списку
+      </button>
+      {article.urlToImage && (
+        <img
+          alt={article.title}
+          className="w-full h-64 object-cover rounded mb-4"
+          src={article.urlToImage}
+        />
+      )}
+      <h1 className="text-2xl font-bold mb-2">{article.title}</h1>
+      <p className="text-sm text-gray-600 mb-4">
+        {article.author && `Автор: ${article.author} · `}
+        {formatDateTime(article.publishedAt)}
+      </p>
+      <p className="text-gray-800 leading-7">{article.content || article.description}</p>
+      <a
+        className="text-blue-500 underline block mt-6"
+        href={article.url}
+        rel="noreferrer"
+        target="_blank"
+      >
+        Читать полностью на источнике
+      </a>
     </div>
   );
 };
