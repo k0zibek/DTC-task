@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthScreen } from "./screens/AuthScreen";
 import { WebViewScreen } from "./screens/WebViewScreen";
+import "./global.css";
 
 const Stack = createNativeStackNavigator();
 
