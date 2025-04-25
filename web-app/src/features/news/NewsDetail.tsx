@@ -24,19 +24,18 @@ export const NewsDetail = () => {
       >
         ← Назад к списку
       </button>
-      {article.urlToImage && (
+      {article.image_url && (
         <img
           alt={article.title}
-          className="w-full h-64 object-cover rounded mb-4"
-          src={article.urlToImage}
+          className="w-full h-full object-cover rounded mb-4"
+          src={article.image_url}
         />
       )}
       <h1 className="text-2xl font-bold mb-2">{article.title}</h1>
       <p className="text-sm text-gray-600 mb-4">
-        {article.author && `Автор: ${article.author} · `}
-        {formatDateTime(article.publishedAt)}
+        {formatDateTime(article.published_at)}
       </p>
-      <p className="text-gray-800 leading-7">{article.content || article.description}</p>
+      <p className="text-gray-800 leading-7">{article.description}</p>
       <a
         className="text-blue-500 underline block mt-6"
         href={article.url}

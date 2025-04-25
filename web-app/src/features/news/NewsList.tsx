@@ -2,7 +2,7 @@ import { NewsCard } from 'features/news/components/NewsCard';
 import { useNews } from 'features/news/hooks/useNews';
 
 export const NewsList = () => {
-  const { data, isLoading, error } = useNews();
+  const { data: articles, isLoading, error } = useNews();
 
   if (isLoading) {
     return <h3>Загрузка...</h3>;
@@ -14,8 +14,8 @@ export const NewsList = () => {
 
   return (
     <div className="grid gap-4">
-      {data?.articles.map((article) => (
-        <NewsCard key={article.title} article={article} />
+      {articles?.data.map((article) => (
+        <NewsCard key={article.uuid} article={article} />
       ))}
     </div>
   );

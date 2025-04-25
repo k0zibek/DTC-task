@@ -1,7 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchTopHeadlines } from 'features/news/api/newsApi';
+import { type QueryFunctionContext, useQuery } from '@tanstack/react-query';
+import { fetchAllNews } from 'features/news/api/newsApi';
+import type { NewsQueryParams, NewsResponse } from 'features/news/types';
 
-export const useNews = () => useQuery({
-  queryKey: ['fetchTopHeadlines'],
-  queryFn: fetchTopHeadlines,
+type NewsKey = ['allNews', NewsQueryParams?];
+
+export const useNews = (params?: NewsQueryParams) => useQuery<NewsResponse, Error, NewsResponse, NewsKey>({
+  queryKey: ['allNews', params],
+  queryFn: (ctx: QueryFunctionContext<NewsKey>) => {
+    const [, queryParams] = ctx.queryKey;
+
+    return fetchAllNews(queryParams);
+  },
+  placeholderData: (previousData) => previousData,
 });
