@@ -1,69 +1,69 @@
-import { useEffect } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import {View, Text, Alert, TouchableOpacity, TextInput} from 'react-native';
 import * as LocalAuthentication from "expo-local-authentication";
+import { useAuthStore } from "../services/auth/model/authStore";
+import React, {useEffect, useState} from "react";
 
-const alertComponent = (
-      title: string,
-      message: string,
-      buttonText: string,
-      handlePress: () => void,
-) => {
-  return Alert.alert(title, message, [
-    {
-      text: buttonText,
-      onPress: handlePress,
-    }
-  ]);
+const CORRECT_PIN = "1234";
+
+const handleBiometricAuth = async (navigation: any) => {
+  const hasHardware = await LocalAuthentication.hasHardwareAsync();
+  const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+  if (!hasHardware || !isEnrolled) {
+    return Alert.alert("Биометрия недоступна", "Войдите с пин-кодом");
+  }
+
+  const biometricAuth = await LocalAuthentication.authenticateAsync({
+    promptMessage: 'Войти с помощью биометрии',
+    cancelLabel: 'Отмена',
+    disableDeviceFallback: true,
+  });
+
+  if (biometricAuth.success) {
+    useAuthStore.getState().login();
+    navigation.replace('WebView');
+  } else {
+    Alert.alert("Не удалось пройти биометрию", "Попробуйте войти с пин-кодом");
+  }
 }
 
 export const AuthScreen = ({ navigation }: any) => {
-  const handleBiometricAuth = async () => {
-    const isBiometricAvailable = await LocalAuthentication.hasHardwareAsync();
+  const [pin, setPin] = useState("");
+  const login = useAuthStore((state) => state.login);
 
-    if( !isBiometricAvailable ){
-      return alertComponent(
-            'Please enter your password',
-            'Biometric is not available',
-            'OK', () => console.log(isBiometricAvailable),
-      )
-    }
-
-    const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
-    if( !savedBiometrics ){
-      return alertComponent(
-          'Biometric record not found',
-          'Please enter your password',
-          'OK', () => console.log(isBiometricAvailable),
-      )
-    }
-
-    const biometricAuth = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Войти с помощью биометрии",
-      disableDeviceFallback: true,
-    });
-
-    if (biometricAuth.success || savedBiometrics) {
-      navigation.replace('WebView')
+  const handleLogin = () => {
+    if (pin === CORRECT_PIN) {
+      login();
+      navigation.replace("WebView");
     } else {
-      Alert.alert("Ошибка авторизации", "Не удалось пройти биометрию.");
+      Alert.alert("Неверный PIN", "Попробуйте ещё раз");
+      setPin("");
     }
-  }
+  };
 
   useEffect(() => {
-    handleBiometricAuth()
-  }, []);
+    handleBiometricAuth(navigation);
+  },[])
 
   return (
-      <View style={styles.authContainer}>
-        <Text>Авторизация...</Text>
+      <View className='flex-1 bg-blue-50 justify-center items-center'>
+        <View>
+          <Text className="text-2xl font-semibold mb-4 text-center text-gray-900">Введите PIN-код</Text>
+        </View>
+
+        <TextInput
+            value={pin}
+            onChangeText={setPin}
+            placeholder="****"
+            secureTextEntry
+            keyboardType="numeric"
+            maxLength={4}
+            className="border border-gray-300 rounded-lg p-5 text-center text-4xl mb-4 w-1/3"
+        />
+
+        <TouchableOpacity onPress={handleLogin} className="bg-blue-600 px-6 py-3 rounded-lg">
+          <Text className="text-white font-semibold text-lg">Войти</Text>
+        </TouchableOpacity>
       </View>
   );
-};
-
-const styles = StyleSheet.create({
-  authContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  }
-})
+}
