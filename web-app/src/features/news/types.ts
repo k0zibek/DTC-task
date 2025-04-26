@@ -1,31 +1,27 @@
 export interface Article {
-  uuid: string;
+  id: number;
   title: string;
-  description: string;
-  keywords: string;
-  snippet: string;
+  text: string;
+  summary: string;
   url: string;
-  image_url: string;
+  image: string;
+  video: string;
+  publish_date: string;
+  author: string;
+  authors: string[];
   language: string;
-  published_at: string;
-  source: string;
-  categories: string[];
-  relevance_score: number | null;
-}
-
-export interface NewsMeta {
-  found: number;
-  returned: number;
-  limit: number;
-  page: number;
+  source_country: string;
+  sentiment: number;
 }
 
 export interface NewsResponse {
-  meta: NewsMeta;
-  data: Article[];
+  offset: number,
+  number: number,
+  available: number,
+  news: Article[];
 }
 
 export interface NewsQueryParams {
-  page: number;
-  pageSize: number;
+  number: number;
+  text?: string;
 }
